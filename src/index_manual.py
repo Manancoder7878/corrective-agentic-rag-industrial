@@ -1,6 +1,7 @@
 from src.ingestion.pdf_parser import load_pdf_pages
 from src.ingestion.chunking import split_manual_documents
-from src.retrieval.vector_store import build_or_load_vector_store
+from src.retrieval.vector_store import build_or_load_hybrid_store
+from src.retrieval.hybrid import get_hybrid_retriever
 
 def main():
     pdf_path = "data/manuals/abb_irc5_troubleshooting.pdf"
@@ -12,29 +13,26 @@ def main():
     chunks = split_manual_documents(pages)
     print(f"Total chunks prepared: {len(chunks)}")
 
-    print("Indexing into local Qdrant collection...")
-    vector_store = build_or_load_vector_store(chunks=chunks)
-    print("Indexing complete! Data persisted to data/qdrant_data.")
+    print("Building Hybrid Qdrant Index (Dense + BM25)...")
+    build_or_load_hybrid_store(chunks=chunks)
+    print("Hybrid indexing complete and persisted!")
 
-    # Verification query using MMR
-    test_query = "FlexPendant screen stays black during boot"
-    print(f"\n--- Testing MMR Search: '{test_query}' ---")
-    results = vector_store.max_marginal_relevance_search(
-        query=test_query, 
-        k=3, 
-        fetch_k=8, 
-        lambda_mult=0.7
-    )
+    retriever = get_hybrid_retriever(top_k=2)
 
-    for i, doc in enumerate(results, 1):
-        raw_page = doc.metadata.get("page", 0)
-        pdf_sheet = raw_page + 1       # matches adobe acrobats page counter box
-        printed_page = pdf_sheet - 2   # matches page footer printed on the manual
+    # Test 1: Exact Industrial Fault Code (BM25 target)
+    code_query = "110710"
+    print(f"\n================ TEST 1: Exact Event Code '{code_query}' ================")
+    code_results = retriever.retrieve(code_query, top_k=2)
+    for i, doc in enumerate(code_results, 1):
+        print(f"[{i}] Page: {doc.metadata.get('page')} | Chunk: {doc.metadata.get('chunk_id')}")
+        print(f"    Snippet: {doc.page_content[:180]}...\n")
 
-        print(f"\nResult {i}:")
-        print(f"Source: {doc.metadata.get('source')} | PDF Sheet: {pdf_sheet} (Manual Page: {printed_page})")
-        print(f"Chunk ID: {doc.metadata.get('chunk_id')}")
-        print(f"Snippet: {doc.page_content[:200]}...")
+    symptom_query = "FlexPendant screen blank when starting"
+    print(f"================ TEST 2: Semantic Symptom '{symptom_query}' ================")
+    symptom_results = retriever.retrieve(symptom_query, top_k=2)
+    for i, doc in enumerate(symptom_results, 1):
+        print(f"[{i}] Page: {doc.metadata.get('page')} | Chunk: {doc.metadata.get('chunk_id')}")
+        print(f"    Snippet: {doc.page_content[:180]}...\n")
 
 if __name__ == "__main__":
     main()

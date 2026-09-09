@@ -1,41 +1,47 @@
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 from langchain_core.documents import Document
-from langchain_qdrant import Qdrant
+from langchain_qdrant import QdrantVectorStore, FastEmbedSparse, RetrievalMode
 from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
 
-COLLECTION_NAME = "abb_irc5_troubleshooting"
+COLLECTION_NAME = "abb_irc5_hybrid"
 DEFAULT_DB_PATH = Path("data/qdrant_data")
 
-def get_embedding_model() -> FastEmbedEmbeddings:
-    # returns local, lightweight fastembed embeddings model
+def get_dense_embeddings() -> FastEmbedEmbeddings:
+    # Dense embedding model for semantic intent
     return FastEmbedEmbeddings(model_name="BAAI/bge-small-en-v1.5")
 
-def build_or_load_vector_store(
-    chunks: List[Document] = None,
+def get_sparse_embeddings() -> FastEmbedSparse:
+    # Sparse BM25 model for alphanumeric event codes and part identifiers
+    return FastEmbedSparse(model_name="Qdrant/bm25")
+
+def build_or_load_hybrid_store(
+    chunks: Optional[List[Document]] = None,
     persist_path: Path = DEFAULT_DB_PATH,
     collection_name: str = COLLECTION_NAME
-) -> Qdrant:
-    """
-    Builds a persistent local Qdrant collection if chunks are provided,
-    or connects to the existing local index on disk.
-    """
-    embeddings = get_embedding_model()
+) -> QdrantVectorStore:
+    # Builds or loads a persistent qdrant collection supporting native hybrid search
+    dense_embeddings = get_dense_embeddings()
+    sparse_embeddings = get_sparse_embeddings()
     persist_path.mkdir(parents=True, exist_ok=True)
 
     if chunks:
-        # Build and store new embeddings locally
-        vector_store = Qdrant.from_documents(
+        # Build new hybrid index(both dense and sparse vectors computed)
+        vector_store = QdrantVectorStore.from_documents(
             documents=chunks,
-            embedding=embeddings,
+            embedding=dense_embeddings,
+            sparse_embedding=sparse_embeddings,
+            retrieval_mode=RetrievalMode.HYBRID,
             path=str(persist_path),
             collection_name=collection_name
         )
         return vector_store
 
-    # Load existing local collection without re-indexing
-    return Qdrant.from_existing_collection(
-        embedding=embeddings,
+    # Load existing local collection(hybrid) without re-indexing
+    return QdrantVectorStore.from_existing_collection(
+        embedding=dense_embeddings,
+        sparse_embedding=sparse_embeddings,
+        retrieval_mode=RetrievalMode.HYBRID,
         path=str(persist_path),
         collection_name=collection_name
     )
