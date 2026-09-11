@@ -6,3 +6,6 @@ langchain-qdrant
 qdrant-client
 fastembed
 pytest
+langgraph
+pydantic
+langchain-groq

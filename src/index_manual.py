@@ -19,7 +19,6 @@ def main():
 
     retriever = get_hybrid_retriever(top_k=2)
 
-    # Test 1: Exact Industrial Fault Code (BM25 target)
     code_query = "110710"
     print(f"\n================ TEST 1: Exact Event Code '{code_query}' ================")
     code_results = retriever.retrieve(code_query, top_k=2)
