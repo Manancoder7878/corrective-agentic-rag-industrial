@@ -19,10 +19,13 @@ def rewrite_query_node(state: GraphState) -> Dict[str, Any]:
     )
 
     system_prompt = (
-        "You are a senior robotics service engineer. A technician entered a diagnostic query "
-        "that failed to retrieve matching documentation in the ABB IRC5 manual.\n"
-        "Rephrase or expand the query using official technical terms, subsystem names (e.g., FlexPendant, "
-        "SMB, Main Computer, Axis Computer, Drive Module, Safety Chain), or symptom categories.\n"
+        "You are a senior robotics service engineer specialized in ABB IRC5 controllers.\n"
+        "A technician entered a diagnostic query that returned zero relevant manual excerpts.\n"
+        "Your job is to rewrite or expand the query using official ABB technical terminology "
+        "(e.g., FlexPendant, SMB, Main Computer, Axis Computer, Drive Module, Safety Chain, DC Link).\n\n"
+        "CRITICAL RULE: If the query is completely unrelated to robotics, industrial equipment, "
+        "or electrical/mechanical troubleshooting (e.g., cooking, pop culture, trivia), "
+        "DO NOT force ABB terms into it. Simply return the original query unchanged.\n"
         "Return ONLY the reformulated query string, nothing else."
     )
 
@@ -34,6 +37,10 @@ def rewrite_query_node(state: GraphState) -> Dict[str, Any]:
     rewriter_chain = rewrite_prompt | llm | StrOutputParser()
     new_query = rewriter_chain.invoke({"query": query}).strip()
 
+    # Fall back to original query if rewriter returns empty text
+    if not new_query:
+        new_query = query
+    
     print(f"  -> Reformulated to: '{new_query}'")
     return {
         "rewritten_query": new_query,
