@@ -1,0 +1,37 @@
+[
+  {
+    "id": "tc_01_flexpendant_black_screen",
+    "category": "flexpendant",
+    "question": "FlexPendant screen stays black during boot",
+    "ground_truth_answer": "Verify main power supply limits and transformer connections in the drive module. Confirm power-distribution board run-time mode by waiting at least 1 minute after boot. Check DSQC 662 status LED: if green, proceed; if red, allow UltraCAP to fully discharge. If the pendant remains dead, follow procedure for dead FlexPendant or cable replacement.",
+    "ground_truth_pages": [31, 40, 41, 62]
+  },
+  {
+    "id": "tc_02_smb_battery_calibration_loss",
+    "category": "calibration",
+    "question": "Robot loses revolution counter calibration after power down",
+    "ground_truth_answer": "A loss of calibration after power-off indicates the SMB (Serial Measurement Board) battery backup is depleted or the arm was manually moved with motors off. Inspect SMB cabling and resolver connections, replace the SMB lithium battery pack if voltage has dropped, and perform a revolution counter update calibration procedure as outlined in the product manual.",
+    "ground_truth_pages": [170, 282]
+  },
+  {
+    "id": "tc_03_motor_noise_brake_slip",
+    "category": "drive_system",
+    "question": "Loud noise from motor and arm sags or drops when enabling motors",
+    "ground_truth_answer": "Loud clicking or squealing accompanied by arm sag indicates mechanical joint wear, damaged bearings, or failing motor brakes. Locate the specific axis emitting the sound, inspect gearbox-motor joints, verify brake release voltage, check for motor stall or high load, and service or replace worn mechanical brakes.",
+    "ground_truth_pages": [45, 183]
+  },
+  {
+    "id": "tc_04_dsqc_run_chain_open",
+    "category": "safety_chain",
+    "question": "Run chain open error preventing Motors ON",
+    "ground_truth_answer": "Inspect safety chain status LEDs on the panel board. Verify emergency stop pushbuttons (FlexPendant, cabinet, external) are released and contact blocks are closed. Check the safety gate interlocks and dual-channel contacts on the contactor unit. If safety chain LEDs remain unlit, check 24V supply to safety loop and replace faulty limit switches or contactors.",
+    "ground_truth_pages": [62, 142, 145]
+  },
+  {
+    "id": "tc_05_usb_storage_failure",
+    "category": "flexpendant",
+    "question": "FlexPendant will not detect or read files from USB memory stick",
+    "ground_truth_answer": "Confirm USB flash drive format is FAT32 and not NTFS or exFAT. Check physical USB port on the FlexPendant for bent connector pins or debris. If the port fails, attempt connecting to the USB service port on the Main Computer directly or verify mass storage device drivers in the controller system boot settings.",
+    "ground_truth_pages": [40, 53]
+  }
+]
