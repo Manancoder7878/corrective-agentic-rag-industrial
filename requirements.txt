@@ -9,3 +9,5 @@ pytest
 langgraph
 pydantic
 langchain-groq
+datasets
+pandas
