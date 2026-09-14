@@ -1,0 +1,6 @@
+id,question,naive_faithfulness,naive_relevance,naive_precision,crag_faithfulness,crag_relevance,crag_precision
+tc_01_flexpendant_black_screen,FlexPendant screen stays black during boot,0.67,0.95,1.0,0.9,0.95,1.0
+tc_02_smb_battery_calibration_loss,Robot loses revolution counter calibration after power down,0.82,0.95,1.0,0.82,1.0,1.0
+tc_03_motor_noise_brake_slip,Loud noise from motor and arm sags or drops when enabling motors,0.55,0.95,0.25,0.86,0.95,0.33
+tc_04_dsqc_run_chain_open,Run chain open error preventing Motors ON,0.9,0.95,0.4,0.857,1.0,0.4
+tc_05_usb_storage_failure,FlexPendant will not detect or read files from USB memory stick,0.35,0.95,0.0,0.55,0.95,0.0
