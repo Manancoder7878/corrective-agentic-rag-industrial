@@ -1,0 +1,162 @@
+id,question,answer,ground_truth,faithfulness,answer_relevance,context_precision
+tc_01_flexpendant_black_screen,FlexPendant screen stays black during boot,"**Problem / Description**  
+The FlexPendant powers on but the screen remains black (no image is displayed). No entries or functions are available, indicating that the pendant is not responding to input.  
+
+**Probable Causes**  
+- Loss of main power supply or power outside the specified limits.  
+- Main transformer in the Drive module not correctly connected to the mains.  
+- Power distribution board not yet in run‑time mode (the 1‑minute wait after power‑on has not elapsed).  
+- DSQC 662 status LED not green, indicating the controller is not in a normal operating state.  
+- FlexPendant has internal errors or warnings that prevent the display from initializing.  
+
+**Recommended Actions** (step‑by‑step)  
+
+1. **Verify main power** – Confirm that the system’s main power supply is present and within the limits specified in the plant documentation.  
+2. **Check transformer connection** – Ensure the main transformer in the Drive module is correctly connected to the mains supply.  
+3. **Allow run‑time mode** – After power‑on, wait at least 1 minute for the power distribution board to enter run‑time mode.  
+4. **Inspect DSQC 662 status LED** – Look at the Status LED on the DSQC 662:  
+   - If the LED is **GREEN**, the controller is in normal operation.  
+   - If the LED is **RED**, the controller is still in power‑down (UltraCAP discharge) and must be allowed to complete.  
+5. **Check FlexPendant diagnostics** – Open the FlexPendant’s diagnostic menu (if accessible) and note any error or warning messages.  
+6. **Re‑attempt display** – After confirming power and controller status, power‑cycle the FlexPendant (turn it off, wait a few seconds, then turn it on) and observe whether the screen image appears.  
+
+**Manual Citations**  
+- Page 40, Chunk irc5_p40_c110 – Description of a “dead” FlexPendant and reference to the “Problem connecting FlexPendant” section.  
+- Page 41, Chunk irc5_p41_c113 – Description of FlexPendant starting without a screen image.  
+- Page 31, Chunk irc5_p31_c89 – Recommended actions for start‑up failure: verify main power supply and transformer connection.  
+- Page 62, Chunk irc5_p62_c177 – Actions: check FlexPendant errors/warnings, ensure power distribution board run‑time mode, and verify DSQC 662 Status LED (GREEN = normal).","Verify main power supply limits and transformer connections in the drive module. Confirm power-distribution board run-time mode by waiting at least 1 minute after boot. Check DSQC 662 status LED: if green, proceed; if red, allow UltraCAP to fully discharge. If the pendant remains dead, follow procedure for dead FlexPendant or cable replacement.",0.875,1.0,1.0
+tc_02_smb_battery_calibration_loss,Robot loses revolution counter calibration after power down,"**Problem / Description**  
+After a power‑down the robot no longer retains its revolution‑counter calibration. The system enters *SYS HALT* and automatic motion is impossible; only manual jogging is available.
+
+**Probable Causes**  
+1. The revolution‑counter value stored in the Serial Measurement Board (SMB) was lost when the SMB battery backup failed.  
+2. The SMB, resolver, or the cables linking them may be faulty.  
+3. Bad or poorly screened connections (especially non‑ABB cables) can corrupt the measurement data.  
+4. A temporary disturbance or electromagnetic interference (EMI) in the cell may have corrupted the axis computer or SMB data.  
+5. The axis computer itself may be defective.
+
+**Recommended Actions** (step‑by‑step)  
+
+1. **Verify SMB battery status** – Check the battery backup for the SMB indicated in the warning “Battery backup lost”. If the battery is depleted, replace it to prevent loss of revolution‑counter data.  
+2. **Restart the controller** – Power‑cycle the robot to clear any temporary disturbances.  
+3. **Reset the revolution counters** – Follow the procedure in the robot Product Manual to reset all revolution counters (as required after a loss of SMB data).  
+4. **Inspect and reseat all SMB‑related cables** –  
+   - Ensure the cable between the SMB and the axis computer is securely connected and properly screened.  
+   - Replace any non‑ABB cables with approved ABB cables.  
+5. **Check the resolver and its wiring** – Verify that the resolver is correctly connected and that its cables are intact; replace if any damage is found.  
+6. **Test the Serial Measurement Board** – Use diagnostic tools to read the SMB status. If the board reports errors or abnormal values, replace the SMB.  
+7. **Assess EMI sources** – Confirm that no high‑level electromagnetic emitters are located near the robot cabling; relocate or shield them if necessary.  
+8. **Validate the axis computer** – If the problem persists after the above steps, restart the system again and then verify the axis computer’s operation. Replace the axis computer if it is found faulty.  
+
+**Manual Citations**  
+- Page 282, Chunk irc5_p282_c1304 – loss of calibration, possible manual arm movement, faulty SMB/resolver/cables, recommended actions (update counter, check resolver/cables, replace SMB).  
+- Page 170, Chunk irc5_p170_c736 – SYS HALT, loss of calibration, bad connections/cables, faulty SMB or axis computer, recommended actions (reset counters, check cable).  
+- Page 170, Chunk irc5_p170_c735 – temporary disturbance, faulty axis computer, recommended actions (restart, reset counters, avoid EMI, verify/replace axis computer).  
+- Page 170, Chunk irc5_p170_c739 – “Battery backup lost” description and consequence (loss of revolution‑counter data).","A loss of calibration after power-off indicates the SMB (Serial Measurement Board) battery backup is depleted or the arm was manually moved with motors off. Inspect SMB cabling and resolver connections, replace the SMB lithium battery pack if voltage has dropped, and perform a revolution counter update calibration procedure as outlined in the product manual.",0.9,0.95,1.0
+tc_03_motor_noise_brake_slip,Loud noise from motor and arm sags or drops when enabling motors,"**Problem / Description**  
+When the Motors ON command is issued the robot arm sags or drops and a loud noise is heard from the motor(s).  
+
+---
+
+**Probable Causes**  
+1. Incorrect motor data in the controller configuration files.  
+2. Motor cables incorrectly connected or damaged.  
+3. Short circuit in a motor cable (phase‑to‑phase or phase‑to‑ground).  
+4. DC‑link voltage too low.  
+5. Incoming mains voltage outside specification.  
+6. Motor‑cooling fan cable damaged, fan not rotating, or Drive Module Power Supply faulty.  
+7. Mechanical joint between motor and gearbox damaged.  
+8. Bearings damaged or worn.  
+9. Wrong robot type connected to the controller.  
+10. Brakes not releasing correctly.  
+
+---
+
+**Recommended Actions** (step‑by‑step)  
+
+1. **Verify motor data** – Open the configuration files on the controller and confirm that the motor type, rated current, and other parameters match the installed motor.  
+2. **Inspect motor cabling** –  
+   a. Visually check that each motor cable is plugged into the correct terminals.  
+   b. Look for signs of abrasion, cuts, or broken conductors.  
+3. **Test for cable shorts** – Using a multimeter, measure resistance phase‑to‑phase and phase‑to‑ground on each motor cable; any near‑zero reading indicates a short that must be repaired or the cable replaced.  
+4. **Measure DC‑link voltage** – With the system in Motors ON state, measure the DC‑link voltage on the Drive Module; if it is below the specified limit, investigate the power supply or rectifier.  
+5. **Check mains supply** – Verify that the incoming three‑phase mains voltage is within the limits given in the manual; correct any supply‑voltage problems before retrying.  
+6. **Examine the motor‑cooling fan** –  
+   a. Ensure the fan cable is correctly connected to the motor or contactor unit.  
+   b. Confirm the fan spins freely and that airflow is not obstructed.  
+   c. Measure the Drive Module Power Supply input and output voltages; replace the fan or Power Supply if voltages are out of spec.  
+7. **Inspect mechanical joint and gearbox** – Look for visible damage, loosened bolts, or mis‑alignment that could cause the motor to load excessively and produce noise.  
+8. **Check bearings** – Rotate the joint by hand; feel for roughness, clicking, or grinding that would indicate worn or damaged bearings. Replace bearings as needed.  
+9. **Confirm robot type** – Verify that the robot model installed matches the type programmed in the controller configuration.  
+10. **Validate brake release** – With the system powered, command a brake release and observe whether the brake disengages smoothly; if not, service or replace the brake mechanism.  
+
+After each corrective step, attempt to enable the motors again and observe whether the sagging and noise have been eliminated.  
+
+---
+
+**Manual Citations**  
+
+- Page 153, Chunk irc5_p153_c630 – motor data, cable connection, cable short, DC‑link voltage, mains voltage.  
+- Page 115, Chunk irc5_p115_c400 – enabling device reset (relevant if system halts after fault).  
+- Page 125, Chunk irc5_p125_c459 – fan cabling, fan operation, Drive Module Power Supply.  
+- Page 45,  Chunk irc5_p45_c124 – mechanical joint damage, bearing wear, wrong robot type, brake release.","Loud clicking or squealing accompanied by arm sag indicates mechanical joint wear, damaged bearings, or failing motor brakes. Locate the specific axis emitting the sound, inspect gearbox-motor joints, verify brake release voltage, check for motor stall or high load, and service or replace worn mechanical brakes.",0.875,1.0,0.25
+tc_04_dsqc_run_chain_open,Run chain open error preventing Motors ON,"**Problem / Description**  
+The controller reports a *Run chain open* fault while the system is in the **Motor ON** state. Because the run‑chain is open, the controller forces the robot into **SYS_HALT** and prevents the motors from being turned on.  
+
+**Probable Causes**  
+1. Cables or connections on the Safety System are unplugged, damaged, or contaminated.  
+2. The drive‑module contactor that forms the run chain is mechanically stuck (e.g., welded closed or manually pulled down).  
+3. The auxiliary (help) contactor for the run chain exhibits bad galvanic behavior or has a faulty cable to the Safety System.  
+
+**Recommended Actions** – perform in the order listed  
+
+1. **Inspect safety‑system wiring** – verify that all cables and connectors on the Safety System are present, undamaged, and free from contamination.  
+2. **Check other error messages** – look for any primary‑fault codes that may give a more specific indication of the fault source.  
+3. **Locate and reset any safety switches** – if a safety switch associated with the run chain is tripped, reset it and attempt a system restart.  
+4. **Examine the drive‑module contactor** – determine whether the contactor is mechanically stuck (e.g., welded closed or manually pulled down).  
+5. **If the contactor is stuck or not released**, shut down the robot safely, replace the faulty motor/contact contactor, and reinstall.  
+6. **Verify the auxiliary/help contactor and its cable** – ensure the auxiliary contactor is not exhibiting bad galvanic behavior and that its cable to the Safety System is intact.  
+7. **After corrective work, restart the controller** and confirm that the run‑chain fault is cleared and the motors can be turned on.  
+
+**Manual Citations**  
+- Page 185, Chunk irc5_p185_c840 – description of “Run chain open in motor on state”, consequences, probable causes, and initial recommended actions.  
+- Page 185, Chunk irc5_p185_c841 – additional recommended actions for a stuck motor contactor and replacement guidance.  
+- Page 116, Chunk irc5_p116_c405 – steps to check other error messages, reset switches, and verify cables/connections for run‑chain faults.  ","Inspect safety chain status LEDs on the panel board. Verify emergency stop pushbuttons (FlexPendant, cabinet, external) are released and contact blocks are closed. Check the safety gate interlocks and dual-channel contacts on the contactor unit. If safety chain LEDs remain unlit, check 24V supply to safety loop and replace faulty limit switches or contactors.",0.82,1.0,0.4
+tc_05_usb_storage_failure,FlexPendant will not detect or read files from USB memory stick,"**Problem / Description**  
+The FlexPendant does not detect or read any files stored on a USB memory stick.
+
+**Probable Causes**  
+- The controller is generating a **Read error (40698)** because the file being accessed cannot be read. One documented cause is that the file size exceeds the maximum size allowed by the system’s file‑transfer settings.  
+- The controller may be reporting **Program Memory Full (40699)**, preventing the loading of a module (or file) from the USB stick.  
+- A hardware fault indicated by abnormal LEDs on the electronic unit can also stop the USB interface from functioning.  
+- Insufficient diagnostic information may be available because the event logs have not been reviewed.
+
+**Recommended Actions** (ordered step‑by‑step)  
+
+1. **Check the file size** on the USB stick.  
+   - Ensure each file is smaller than the maximum file size configured in the controller’s file‑transfer (FTP) protocol settings. If a file is too large, reduce its size or split it into smaller parts.  
+   - *Reference: Read error 40698 description and cause*【Page 227】.  
+
+2. **Review the FlexPendant / RobotStudio error event logs** for codes 40698 or 40699.  
+   - Open the log viewer on the FlexPendant or in RobotStudio and note any “Read error” or “Program Memory Full” entries.  
+   - *Reference: “Read the logs!” guidance*【Page 23】.  
+
+3. **If a Program Memory Full error (40699) is logged:**  
+   a. Remove one or more non‑essential modules from the controller to free memory.  
+   b. If the file contains large data structures, split them into smaller blocks before attempting to load again.  
+   - *Reference: Recommended actions for error 40699*【Page 227】.  
+
+4. **Inspect the controller’s LEDs** for any abnormal indications (e.g., red or flashing status).  
+   - Refer to the LED status table in the product manual to interpret the signals.  
+   - *Reference: “Check the electronical unit's LEDs!”*【Page 23】.  
+
+5. **Verify the USB hardware connection** using the controller’s circuit diagram.  
+   - Locate the USB power and data lines in the electrical schematic to confirm they are correctly wired and receiving power.  
+   - *Reference: “Read the circuit diagram!”*【Page 23】.  
+
+6. **Consult the IRC5 product manual** for any additional USB‑specific notes or configuration parameters that may affect peripheral detection.  
+   - *Reference: General reminder to read the manual before proceeding*【Page 23】.  
+
+**Manual Citations**  
+- Page 227, Chunk ID irc5_p227_c1048 – Error 40698 (Read error) and 40699 (Program Memory Full) descriptions, consequences, and recommended actions.  
+- Page 23, Chunk ID irc5_p23_c61 – Guidance to read the manual, circuit diagram, event logs, and check LEDs.","Confirm USB flash drive format is FAT32 and not NTFS or exFAT. Check physical USB port on the FlexPendant for bent connector pins or debris. If the port fails, attempt connecting to the USB service port on the Main Computer directly or verify mass storage device drivers in the controller system boot settings.",0.56,0.95,0.0
