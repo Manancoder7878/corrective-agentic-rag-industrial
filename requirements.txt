@@ -11,3 +11,4 @@ pydantic
 langchain-groq
 datasets
 pandas
+matplotlib
