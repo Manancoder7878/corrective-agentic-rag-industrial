@@ -12,3 +12,6 @@ langchain-groq
 datasets
 pandas
 matplotlib
+fastapi 
+uvicorn 
+sse-starlette

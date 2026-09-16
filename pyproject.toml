@@ -1,0 +1,41 @@
+[project]
+name = "corrective-agentic-rag-industrial"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Manan B. Prajapati", email = "mananprajapati5656@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "datasets>=5.0.1",
+    "fastapi[standard]>=0.141.1",
+    "fastembed>=0.8.0",
+    "langchain>=1.4.0",
+    "langchain-community>=0.4.2",
+    "langchain-groq>=1.1.3",
+    "langchain-qdrant>=1.1.0",
+    "langchain-text-splitters>=1.1.2",
+    "langgraph>=1.2.11",
+    "matplotlib>=3.11.2",
+    "pandas>=3.0.5",
+    "pydantic>=2.13.5",
+    "pypdf>=6.18.1",
+    "pytest>=9.1.1",
+    "qdrant-client>=1.19.1",
+    "sse-starlette>=3.4.11",
+    "uvicorn>=0.53.0",
+]
+
+[project.scripts]
+corrective-agentic-rag-industrial = "corrective_agentic_rag_industrial:main"
+
+[build-system]
+requires = ["uv_build>=0.12.3,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.uv]
+package = false
+
+[tool.fastapi]
+entrypoint = "src.api.app:api"

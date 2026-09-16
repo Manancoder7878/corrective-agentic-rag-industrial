@@ -68,16 +68,16 @@ def decide_to_generate(state: GraphState) -> str:
         print("--- [DECISION] Max rewrite retries reached. Forcing generation fallback. ---")
         return "generate"
 
-    # CRAG state 1: Incorrect -> Confidence below lower threshold
+    # Incorrect - Confidence below lower threshold
     if not filtered_documents:
         print("--- [CRAG EVALUATION: INCORRECT] All chunks irrelevant. Triggering query rewrite. ---")
         return "rewrite_query"
 
-    # CRAG state 2: Ambiguous -> Partial match / some noise filtered
+    # Ambiguous - Partial match / some noise filtered
     if len(filtered_documents) < len(documents):
         print(f"--- [CRAG EVALUATION: AMBIGUOUS] Kept {len(filtered_documents)}/{len(documents)} relevant chunks. Proceeding to generation. ---")
         return "generate"
 
-    # CRAG state 3: Correct -> High confidence across all retrieved chunks
+    # Correct - High confidence across all retrieved chunks
     print(f"--- [CRAG EVALUATION: CORRECT] All {len(documents)} chunks relevant. Proceeding to generation. ---")
     return "generate"
