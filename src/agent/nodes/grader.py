@@ -52,7 +52,7 @@ def grade_documents_node(state: GraphState) -> Dict[str, Any]:
         else:
             print(f"  -> Drop: [Page {doc.metadata.get('page')}] (Not relevant)")
 
-    return {"filtered_documents": filtered_docs}
+    return {"documents": documents,"filtered_documents": filtered_docs}
 
 def decide_to_generate(state: GraphState) -> str:
     """

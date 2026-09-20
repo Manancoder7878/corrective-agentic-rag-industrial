@@ -15,3 +15,5 @@ matplotlib
 fastapi 
 uvicorn 
 sse-starlette
+streamlit
+httpx-sse
