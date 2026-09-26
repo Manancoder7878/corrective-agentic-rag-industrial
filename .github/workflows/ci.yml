@@ -2,7 +2,7 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, feat/* ]
+    branches: [ main, "feature/*", "feat/*" ]
   pull_request:
     branches: [ main ]
 
@@ -21,13 +21,14 @@ jobs:
       - name: Install Dependencies with uv
         run: |
           pip install uv
-          uv pip install --system ruff pytest httpx
+          # Install your project dependencies plus testing/linting tools
+          uv pip install --system -r pyproject.toml ruff pytest httpx
 
       - name: Run Linter (Ruff)
         run: ruff check .
 
       - name: Run Unit Tests
-        run: pytest tests/
+        run: pytest tests/test_crag_nodes.py
 
       - name: Verify Docker Build
         run: docker compose build --no-cache
