@@ -28,6 +28,9 @@ jobs:
         run: ruff check .
 
       - name: Run Unit Tests
+        env:
+          FASTEMBED_CACHE_PATH: ${{ github.workspace }}/.cache/fastembed
+          HF_HOME: ${{ github.workspace }}/.cache/huggingface
         run: pytest tests/test_crag_nodes.py
 
       - name: Verify Docker Build
