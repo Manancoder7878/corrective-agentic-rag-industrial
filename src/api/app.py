@@ -1,10 +1,12 @@
 import json
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from sse_starlette.sse import EventSourceResponse
 from langchain_core.messages import AIMessageChunk
+from sse_starlette.sse import EventSourceResponse
+
+from src.api.schemas import CitedSource, DiagnosticRequest, DiagnosticResponse
 from src.workflow import app as crag_workflow
-from src.api.schemas import DiagnosticRequest, DiagnosticResponse, CitedSource
 
 api = FastAPI(
     title="ABB IRC5 Industrial Diagnostics CRAG API",

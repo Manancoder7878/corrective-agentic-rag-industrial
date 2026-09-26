@@ -1,5 +1,5 @@
-from src.ingestion.pdf_parser import load_pdf_pages
 from src.ingestion.chunking import split_manual_documents
+from src.ingestion.pdf_parser import load_pdf_pages
 
 
 def main():

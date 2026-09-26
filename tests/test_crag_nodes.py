@@ -1,6 +1,6 @@
-from src.agent.state import GraphState
+from src.agent.nodes.grader import decide_to_generate, grade_documents_node
 from src.agent.nodes.retrieve import retrieve_node
-from src.agent.nodes.grader import grade_documents_node, decide_to_generate
+from src.agent.state import GraphState
 
 
 def run_pipeline_step(query: str):

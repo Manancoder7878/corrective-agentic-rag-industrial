@@ -1,9 +1,22 @@
-from typing import List, Optional
-from pydantic import BaseModel, Field
+
+from pydantic import BaseModel, Field, field_validator
 
 
 class DiagnosticRequest(BaseModel):
-    query: str = Field(..., min_length=5, description="Technician symptom or fault description.")
+    query: str = Field(..., min_length=3, description="Technician symptom or fault description.")
+    
+    @field_validator("query")
+    @classmethod
+    def validate_query(cls, value: str) -> str:
+        value = value.strip()
+
+        if not any(char.isalnum() for char in value):
+            raise ValueError(
+                "Query must contain meaningful text, an event code, "
+                "or an alphanumeric fault description."
+            )
+
+        return value
 
 
 class CitedSource(BaseModel):
@@ -14,8 +27,8 @@ class CitedSource(BaseModel):
 
 class DiagnosticResponse(BaseModel):
     query: str
-    rewritten_query: Optional[str] = None
+    rewritten_query: str | None = None
     diagnosis: str
-    sources: List[CitedSource]
+    sources: list[CitedSource]
     retrieval_status: str
     loop_count: int

@@ -1,8 +1,10 @@
-from typing import Any, Dict
-from src.retrieval.hybrid import get_hybrid_retriever
-from src.agent.state import GraphState
+from typing import Any
 
-def retrieve_node(state: GraphState) -> Dict[str, Any]:
+from src.agent.state import GraphState
+from src.retrieval.hybrid import get_hybrid_retriever
+
+
+def retrieve_node(state: GraphState) -> dict[str, Any]:
     """
     Retrieves candidate documents from persistent qdrant index
     using hybrid dense and sparse search

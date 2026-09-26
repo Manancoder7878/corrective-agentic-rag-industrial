@@ -1,9 +1,11 @@
-from langgraph.graph import StateGraph, END
-from src.agent.state import GraphState
-from src.agent.nodes.retrieve import retrieve_node
-from src.agent.nodes.grader import grade_documents_node, decide_to_generate
-from src.agent.nodes.rewriter import rewrite_query_node
+from langgraph.graph import END, StateGraph
+
 from src.agent.nodes.generate import generate_node
+from src.agent.nodes.grader import decide_to_generate, grade_documents_node
+from src.agent.nodes.retrieve import retrieve_node
+from src.agent.nodes.rewriter import rewrite_query_node
+from src.agent.state import GraphState
+
 
 def build_crag_workflow():
     workflow = StateGraph(GraphState)

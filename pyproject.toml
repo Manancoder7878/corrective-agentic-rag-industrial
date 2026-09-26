@@ -41,3 +41,8 @@ package = false
 
 [tool.fastapi]
 entrypoint = "src.api.app:api"
+
+[tool.ruff.lint]
+ignore = [
+    "BLE001"
+]

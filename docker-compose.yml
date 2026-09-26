@@ -21,3 +21,17 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
+
+  ui:
+    image: crag-robotics-api:v1.0.0
+    container_name: crag-robotics-ui
+    command: streamlit run src/frontend/streamlit_app.py --server.port 8501 --server.address 0.0.0.0
+    ports:
+      - "8501:8501"
+    environment:
+      # Directs frontend to communicate with API service name over docker internal bridge
+      - API_URL=http://api:8000
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped  

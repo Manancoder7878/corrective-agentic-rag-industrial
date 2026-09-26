@@ -1,9 +1,9 @@
-from pathlib import Path
-from typing import List, Optional
-from langchain_core.documents import Document
-from langchain_qdrant import QdrantVectorStore, FastEmbedSparse, RetrievalMode
-from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
 import os
+from pathlib import Path
+
+from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
+from langchain_core.documents import Document
+from langchain_qdrant import FastEmbedSparse, QdrantVectorStore, RetrievalMode
 
 COLLECTION_NAME = "abb_irc5_hybrid"
 DEFAULT_DB_PATH = Path("data/qdrant_data")
@@ -19,7 +19,7 @@ def get_sparse_embeddings() -> FastEmbedSparse:
     return FastEmbedSparse(model_name="Qdrant/bm25", cache_dir=CACHE_DIR)
 
 def build_or_load_hybrid_store(
-    chunks: Optional[List[Document]] = None,
+    chunks: list[Document] | None = None,
     persist_path: Path = DEFAULT_DB_PATH,
     collection_name: str = COLLECTION_NAME
 ) -> QdrantVectorStore:

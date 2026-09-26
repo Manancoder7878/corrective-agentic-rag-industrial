@@ -1,0 +1,9 @@
+[client]
+toolbarMode = "viewer"
+showErrorDetails = false
+
+[browser]
+gatherUsageStats = false
+
+[ui]
+hideTopBar = true

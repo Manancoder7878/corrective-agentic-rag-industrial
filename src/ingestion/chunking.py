@@ -1,13 +1,13 @@
-from typing import List
+
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 
 def split_manual_documents(
-    documents: List[Document], 
+    documents: list[Document], 
     chunk_size: int = 600, 
     chunk_overlap: int = 60
-) -> List[Document]:
+) -> list[Document]:
     # Splits loaded langchain documents and prunes bloat metadata
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=chunk_size,
