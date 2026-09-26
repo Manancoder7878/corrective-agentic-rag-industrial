@@ -1,0 +1,33 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, feat/* ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Dependencies with uv
+        run: |
+          pip install uv
+          uv pip install --system ruff pytest httpx
+
+      - name: Run Linter (Ruff)
+        run: ruff check .
+
+      - name: Run Unit Tests
+        run: pytest tests/
+
+      - name: Verify Docker Build
+        run: docker compose build --no-cache
