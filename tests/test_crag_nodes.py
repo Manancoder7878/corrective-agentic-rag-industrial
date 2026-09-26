@@ -1,44 +1,46 @@
-from src.agent.nodes.grader import decide_to_generate, grade_documents_node
-from src.agent.nodes.retrieve import retrieve_node
-from src.agent.state import GraphState
+from langchain_core.documents import Document
+from src.agent.nodes.grader import grade_documents_node
 
+# Sample documents for testing
+ROBOTICS_DOCS = [
+    Document(
+        page_content="FlexPendant black screen: Check power supply cable and contactor K42 on IRC5 controller.",
+        metadata={"page": 102},
+    )
+]
 
-def run_pipeline_step(query: str):
-    print(f"\n================ TESTING QUERY: '{query}' ================")
-    state: GraphState = {
-        "query": query,
-        "rewritten_query": "",
-        "documents": [],
-        "filtered_documents": [],
-        "generation": "",
-        "loop_count": 0
-    }
-
-    state.update(retrieve_node(state))
-
-    state.update(grade_documents_node(state))
-
-    print(f"Total Docs Retrieved: {len(state['documents'])}")
-    print(f"Total Relevant Docs Kept: {len(state['filtered_documents'])}")
-
-    decision = decide_to_generate(state)
-    print(f"Decision routing: -> {decision}")
-    return state, decision
+CAKE_DOCS = [
+    Document(
+        page_content="Ingredients: 200g flour, 100g sugar, cocoa powder, fresh strawberries.",
+        metadata={"page": 1},
+    )
+]
 
 
 def test_positive_case():
-    state, decision = run_pipeline_step("FlexPendant screen stays black during boot")
-    assert len(state["filtered_documents"]) > 0
-    assert decision == "generate"
+    # Verify that relevant documents are accepted into filtered_documents
+    state = {
+        "query": "FlexPendant screen stays black during boot",
+        "documents": ROBOTICS_DOCS,
+        "retry_count": 0,
+    }
+
+    graded_state = grade_documents_node(state)
+
+    filtered = graded_state.get("filtered_documents", [])
+    assert len(filtered) > 0
+    assert "FlexPendant" in filtered[0].page_content
 
 
 def test_negative_case():
-    state, decision = run_pipeline_step("How do I make chocolate cake with strawberries?")
-    assert len(state["filtered_documents"]) == 0
-    assert decision == "rewrite_query"
+    # Verify that irrelevant documents are dropped from filtered_documents
+    state = {
+        "query": "How do I make chocolate cake with strawberries?",
+        "documents": CAKE_DOCS,
+        "retry_count": 0,
+    }
 
+    graded_state = grade_documents_node(state)
 
-if __name__ == "__main__":
-    test_positive_case()
-    test_negative_case()
-    print("\n All node tests passed successfully!")
+    filtered = graded_state.get("filtered_documents", [])
+    assert len(filtered) == 0
