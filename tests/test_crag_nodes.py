@@ -1,8 +1,13 @@
+from unittest.mock import patch
+
 from langchain_core.documents import Document
 
-from src.agent.nodes.grader import grade_documents_node
+from src.agent.nodes.grader import (
+    GradeDocuments,
+    decide_to_generate,
+    grade_documents_node,
+)
 
-# Sample documents for testing
 ROBOTICS_DOCS = [
     Document(
         page_content="FlexPendant black screen: Check power supply cable and contactor K42 on IRC5 controller.",
@@ -18,30 +23,35 @@ CAKE_DOCS = [
 ]
 
 
-def test_positive_case():
-    # Verify that relevant documents are accepted into filtered_documents
+@patch("langchain_core.runnables.base.RunnableSequence.invoke")
+def test_positive_case(mock_invoke):
+    mock_invoke.return_value = GradeDocuments(binary_score="yes")
+
     state = {
         "query": "FlexPendant screen stays black during boot",
         "documents": ROBOTICS_DOCS,
-        "retry_count": 0,
+        "loop_count": 0,
     }
 
     graded_state = grade_documents_node(state)
+    decision = decide_to_generate(graded_state)
 
-    filtered = graded_state.get("filtered_documents", [])
-    assert len(filtered) > 0
-    assert "FlexPendant" in filtered[0].page_content
+    assert len(graded_state["filtered_documents"]) == 1
+    assert decision == "generate"
 
 
-def test_negative_case():
-    # Verify that irrelevant documents are dropped from filtered_documents
+@patch("langchain_core.runnables.base.RunnableSequence.invoke")
+def test_negative_case(mock_invoke):
+    mock_invoke.return_value = GradeDocuments(binary_score="no")
+
     state = {
         "query": "How do I make chocolate cake with strawberries?",
         "documents": CAKE_DOCS,
-        "retry_count": 0,
+        "loop_count": 0,
     }
 
     graded_state = grade_documents_node(state)
+    decision = decide_to_generate(graded_state)
 
-    filtered = graded_state.get("filtered_documents", [])
-    assert len(filtered) == 0
+    assert len(graded_state["filtered_documents"]) == 0
+    assert decision == "rewrite_query"
