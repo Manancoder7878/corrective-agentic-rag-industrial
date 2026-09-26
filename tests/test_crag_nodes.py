@@ -1,4 +1,5 @@
 from langchain_core.documents import Document
+
 from src.agent.nodes.grader import grade_documents_node
 
 # Sample documents for testing
