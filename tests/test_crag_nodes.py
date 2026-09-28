@@ -15,6 +15,7 @@ ROBOTICS_DOCS = [
     )
 ]
 
+
 CAKE_DOCS = [
     Document(
         page_content="Ingredients: 200g flour, 100g sugar, cocoa powder, fresh strawberries.",
@@ -22,9 +23,9 @@ CAKE_DOCS = [
     )
 ]
 
-
 @patch("langchain_core.runnables.base.RunnableSequence.invoke")
-def test_positive_case(mock_invoke):
+@patch("src.agent.nodes.grader.ChatGroq")
+def test_positive_case(mock_chatgroq, mock_invoke):
     mock_invoke.return_value = GradeDocuments(binary_score="yes")
 
     state = {
@@ -41,7 +42,8 @@ def test_positive_case(mock_invoke):
 
 
 @patch("langchain_core.runnables.base.RunnableSequence.invoke")
-def test_negative_case(mock_invoke):
+@patch("src.agent.nodes.grader.ChatGroq")
+def test_negative_case(mock_chatgroq, mock_invoke):
     mock_invoke.return_value = GradeDocuments(binary_score="no")
 
     state = {
