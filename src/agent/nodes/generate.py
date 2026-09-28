@@ -1,11 +1,14 @@
-from typing import Any, Dict, List
+from typing import Any
+
 from langchain_core.documents import Document
-from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate
 from langchain_groq import ChatGroq
+
 from src.agent.state import GraphState
 
-def format_docs_with_sources(docs: List[Document]) -> str:
+
+def format_docs_with_sources(docs: list[Document]) -> str:
     # Formats retrieved chunks with exact page numbers and chunk ids
     formatted = []
     for doc in docs:
@@ -16,7 +19,7 @@ def format_docs_with_sources(docs: List[Document]) -> str:
     return "\n".join(formatted)
 
 
-def generate_node(state: GraphState) -> Dict[str, Any]:
+def generate_node(state: GraphState) -> dict[str, Any]:
     """
     Synthesizes a diagnostic answer strictly grounded on
     the filtered ABB IRC5 documentation chunks
@@ -59,9 +62,11 @@ def generate_node(state: GraphState) -> Dict[str, Any]:
         ("system", system_prompt),
         (
             "human",
-            "Context from ABB IRC5 Troubleshooting Manual:\n{context}\n\n"
-            "Technician Diagnostic Query: {query}\n\n"
-            "Provide grounded troubleshooting steps with citations:"
+            (
+                "Context from ABB IRC5 Troubleshooting Manual:\n{context}\n\n"
+                "Technician Diagnostic Query: {query}\n\n"
+                "Provide grounded troubleshooting steps with citations:"
+            )
         )
     ])
 

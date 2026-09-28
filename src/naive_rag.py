@@ -2,9 +2,10 @@
 Baseline Naive RAG Pipeline (No Grading, No Query Rewriting, No Self-Correction).
 Used as Pipeline A in comparative A/B evaluation benchmarking.
 """
+import os
+
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_groq import ChatGroq
-import os
 
 from src.retrieval.hybrid import get_hybrid_retriever
 
@@ -12,9 +13,11 @@ from src.retrieval.hybrid import get_hybrid_retriever
 naive_rag_prompt = ChatPromptTemplate.from_messages([
     (
         "system",
-        "You are an industrial robotics maintenance technician assistant. "
-        "Use the provided context to answer the user's troubleshooting question. "
-        "If you do not know the answer, use your technical knowledge to assist."
+        (
+            "You are an industrial robotics maintenance technician assistant. "
+            "Use the provided context to answer the user's troubleshooting question. "
+            "If you do not know the answer, use your technical knowledge to assist."
+        )
     ),
     (
         "human",

@@ -1,44 +1,59 @@
-from src.agent.state import GraphState
-from src.agent.nodes.retrieve import retrieve_node
-from src.agent.nodes.grader import grade_documents_node, decide_to_generate
+from unittest.mock import patch
+
+from langchain_core.documents import Document
+
+from src.agent.nodes.grader import (
+    GradeDocuments,
+    decide_to_generate,
+    grade_documents_node,
+)
+
+ROBOTICS_DOCS = [
+    Document(
+        page_content="FlexPendant black screen: Check power supply cable and contactor K42 on IRC5 controller.",
+        metadata={"page": 102},
+    )
+]
 
 
-def run_pipeline_step(query: str):
-    print(f"\n================ TESTING QUERY: '{query}' ================")
-    state: GraphState = {
-        "query": query,
-        "rewritten_query": "",
-        "documents": [],
-        "filtered_documents": [],
-        "generation": "",
-        "loop_count": 0
+CAKE_DOCS = [
+    Document(
+        page_content="Ingredients: 200g flour, 100g sugar, cocoa powder, fresh strawberries.",
+        metadata={"page": 1},
+    )
+]
+
+@patch("langchain_core.runnables.base.RunnableSequence.invoke")
+@patch("src.agent.nodes.grader.ChatGroq")
+def test_positive_case(mock_chatgroq, mock_invoke):
+    mock_invoke.return_value = GradeDocuments(binary_score="yes")
+
+    state = {
+        "query": "FlexPendant screen stays black during boot",
+        "documents": ROBOTICS_DOCS,
+        "loop_count": 0,
     }
 
-    state.update(retrieve_node(state))
+    graded_state = grade_documents_node(state)
+    decision = decide_to_generate(graded_state)
 
-    state.update(grade_documents_node(state))
-
-    print(f"Total Docs Retrieved: {len(state['documents'])}")
-    print(f"Total Relevant Docs Kept: {len(state['filtered_documents'])}")
-
-    decision = decide_to_generate(state)
-    print(f"Decision routing: -> {decision}")
-    return state, decision
-
-
-def test_positive_case():
-    state, decision = run_pipeline_step("FlexPendant screen stays black during boot")
-    assert len(state["filtered_documents"]) > 0
+    assert len(graded_state["filtered_documents"]) == 1
     assert decision == "generate"
 
 
-def test_negative_case():
-    state, decision = run_pipeline_step("How do I make chocolate cake with strawberries?")
-    assert len(state["filtered_documents"]) == 0
+@patch("langchain_core.runnables.base.RunnableSequence.invoke")
+@patch("src.agent.nodes.grader.ChatGroq")
+def test_negative_case(mock_chatgroq, mock_invoke):
+    mock_invoke.return_value = GradeDocuments(binary_score="no")
+
+    state = {
+        "query": "How do I make chocolate cake with strawberries?",
+        "documents": CAKE_DOCS,
+        "loop_count": 0,
+    }
+
+    graded_state = grade_documents_node(state)
+    decision = decide_to_generate(graded_state)
+
+    assert len(graded_state["filtered_documents"]) == 0
     assert decision == "rewrite_query"
-
-
-if __name__ == "__main__":
-    test_positive_case()
-    test_negative_case()
-    print("\n All node tests passed successfully!")

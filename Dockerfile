@@ -24,7 +24,9 @@ RUN mkdir -p /app/.cache/fastembed /app/.cache/huggingface && \
 
 COPY src/ ./src/
 COPY data/ ./data/
+COPY .streamlit/ ./.streamlit/
 
 EXPOSE 8000
+EXPOSE 8501
 
 CMD ["uvicorn", "src.api.app:api", "--host", "0.0.0.0", "--port", "8000"]

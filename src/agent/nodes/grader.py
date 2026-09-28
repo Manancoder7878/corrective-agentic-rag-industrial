@@ -1,9 +1,12 @@
-from typing import Any, Dict, List
-from pydantic import BaseModel, Field
+from typing import Any
+
+from langchain_core.documents import Document
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_groq import ChatGroq
-from langchain_core.documents import Document
+from pydantic import BaseModel, Field
+
 from src.agent.state import GraphState
+
 
 class GradeDocuments(BaseModel):
     """Binary scoring model for document relevance assessment"""
@@ -12,7 +15,7 @@ class GradeDocuments(BaseModel):
         pattern="^(yes|no)$"
     )
 
-def grade_documents_node(state: GraphState) -> Dict[str, Any]:
+def grade_documents_node(state: GraphState) -> dict[str, Any]:
     """
     Evaluates retrieved chunks for relevance to the diagnostic query
     filters out noise and irrelevant sections
@@ -41,7 +44,7 @@ def grade_documents_node(state: GraphState) -> Dict[str, Any]:
 
     evaluator_chain = grade_prompt | structured_llm_grader
 
-    filtered_docs: List[Document] = []
+    filtered_docs: list[Document] = []
     for doc in documents:
         result = evaluator_chain.invoke({"query": query, "document": doc.page_content})
         grade = result.binary_score.lower()
@@ -52,7 +55,7 @@ def grade_documents_node(state: GraphState) -> Dict[str, Any]:
         else:
             print(f"  -> Drop: [Page {doc.metadata.get('page')}] (Not relevant)")
 
-    return {"filtered_documents": filtered_docs}
+    return {"documents": documents,"filtered_documents": filtered_docs}
 
 def decide_to_generate(state: GraphState) -> str:
     """

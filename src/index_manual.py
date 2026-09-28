@@ -1,7 +1,8 @@
-from src.ingestion.pdf_parser import load_pdf_pages
 from src.ingestion.chunking import split_manual_documents
-from src.retrieval.vector_store import build_or_load_hybrid_store
+from src.ingestion.pdf_parser import load_pdf_pages
 from src.retrieval.hybrid import get_hybrid_retriever
+from src.retrieval.vector_store import build_or_load_hybrid_store
+
 
 def main():
     pdf_path = "data/manuals/abb_irc5_troubleshooting.pdf"

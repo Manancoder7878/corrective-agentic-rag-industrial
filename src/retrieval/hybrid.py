@@ -1,5 +1,6 @@
-from typing import List
+
 from langchain_core.documents import Document
+
 from src.retrieval.vector_store import build_or_load_hybrid_store
 
 
@@ -9,7 +10,7 @@ class IndustrialHybridRetriever:
         self.top_k = top_k
         self.vector_store = build_or_load_hybrid_store()
 
-    def retrieve(self, query: str, top_k: int = None) -> List[Document]:
+    def retrieve(self, query: str, top_k: int | None = None) -> list[Document]:
         # Runs native qdrant hybrid retrieval with reciprocal rank fusion
         k = top_k or self.top_k
         return self.vector_store.similarity_search(query=query, k=k)

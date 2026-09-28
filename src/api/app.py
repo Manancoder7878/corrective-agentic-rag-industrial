@@ -1,10 +1,12 @@
 import json
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from sse_starlette.sse import EventSourceResponse
 from langchain_core.messages import AIMessageChunk
+from sse_starlette.sse import EventSourceResponse
+
+from src.api.schemas import CitedSource, DiagnosticRequest, DiagnosticResponse
 from src.workflow import app as crag_workflow
-from src.api.schemas import DiagnosticRequest, DiagnosticResponse, CitedSource
 
 api = FastAPI(
     title="ABB IRC5 Industrial Diagnostics CRAG API",
@@ -87,14 +89,29 @@ async def diagnose_fault_stream(payload: DiagnosticRequest):
         # Stream langgraph events
         async for event in crag_workflow.astream_events(initial_state, version="v2"):
             kind = event["event"]
-
             # Emit node transitions for ui progress indicators
-            if kind == "on_chain_start" and event.get("name") in ["retrieve", "grade_documents", "rewrite", "generate"]:
-                node_name = event["name"]
-                yield {
-                    "event": "status",
-                    "data": json.dumps({"node": node_name, "message": f"Executing node: {node_name}"})
-                }
+            if kind == "on_chain_start":
+                event_name = event.get("name", "")
+
+                if event_name in [
+                    "retrieve",
+                    "grade_documents",
+                    "rewrite_query",
+                    "generate",
+                ]:
+                    clean_name = (
+                        "rewrite"
+                        if event_name == "rewrite_query"
+                        else event_name
+                    )
+
+                    yield {
+                        "event": "status",
+                        "data": json.dumps({
+                            "node": clean_name,
+                            "message": f"Executing node: {clean_name}"
+                        })
+                    }
 
             # Stream generation tokens as they leave the llm inside the 'generate' node
             elif kind == "on_chat_model_stream":
@@ -108,6 +125,31 @@ async def diagnose_fault_stream(payload: DiagnosticRequest):
                             "data": json.dumps({"token": content})
                         }
 
+            elif kind == "on_chain_end" and event.get("name") == "grade_documents":
+                output = event["data"].get("output", {})
+
+                documents = output.get("documents", [])
+                filtered_documents = output.get("filtered_documents", [])
+                retrieved = len(documents)
+                relevant = len(filtered_documents)
+
+                if relevant == 0:
+                    grade_verdict = "INCORRECT"
+
+                elif relevant < retrieved:
+                    grade_verdict = "AMBIGUOUS"
+
+                else:
+                    grade_verdict = "CORRECT"
+
+                yield {
+                    "event": "grade",
+                    "data": json.dumps({
+                        "verdict": grade_verdict,
+                        "relevant": relevant,
+                        "retrieved": retrieved
+                    })
+                }
             # Capture the final state when the graph finishes to stream source references
             elif kind == "on_chain_end" and event.get("name") == "LangGraph":
                 final_output = event["data"].get("output", {})

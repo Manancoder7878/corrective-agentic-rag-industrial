@@ -1,5 +1,7 @@
-from typing import List, TypedDict
+from typing import TypedDict
+
 from langchain_core.documents import Document
+
 
 class GraphState(TypedDict):
     """
@@ -15,7 +17,7 @@ class GraphState(TypedDict):
     """
     query: str
     rewritten_query: str
-    documents: List[Document]
-    filtered_documents: List[Document]
+    documents: list[Document]
+    filtered_documents: list[Document]
     generation: str
     loop_count: int

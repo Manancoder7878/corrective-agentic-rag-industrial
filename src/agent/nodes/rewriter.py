@@ -1,10 +1,13 @@
-from typing import Any, Dict
-from langchain_core.prompts import ChatPromptTemplate
+from typing import Any
+
 from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate
 from langchain_groq import ChatGroq
+
 from src.agent.state import GraphState
 
-def rewrite_query_node(state: GraphState) -> Dict[str, Any]:
+
+def rewrite_query_node(state: GraphState) -> dict[str, Any]:
     """
     Transforms the users query into an optimized technical search query
     tailored to ABB IRC5 technical manual terminology
