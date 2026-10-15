@@ -12,11 +12,9 @@ An autonomous diagnostic assistant for industrial robotics that ingests official
 ---
 ## System Demo
 
-<p align="center">
-  <video src="docs/Recording_CRAG_project.mp4" controls="controls" width="100%">
-    Your browser does not support the video tag.
-  </video>
-</p>
+[![ABB IRC5 CRAG System Demo](https://img.youtube.com/vi/i1d8D_wQdRo/maxresdefault.jpg)](https://www.youtube.com/watch?v=i1d8D_wQdRo)
+
+> *Click to view the end-to-end diagnostic workflow: LangGraph cyclic state routing, hybrid Qdrant retrieval, and Streamlit execution.*
 
 ---
 
