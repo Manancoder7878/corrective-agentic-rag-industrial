@@ -10,6 +10,15 @@
 An autonomous diagnostic assistant for industrial robotics that ingests official maintenance documentation (ABB IRC5 Controller), performs hybrid dense/sparse retrieval using Qdrant, and executes self-corrective LangGraph cyclic loops to guarantee zero-hallucination troubleshooting.
 
 ---
+## System Demo
+
+<p align="center">
+  <video src="docs/Recording_CRAG_project.mp4" controls="controls" width="100%">
+    Your browser does not support the video tag.
+  </video>
+</p>
+
+---
 
 ## Empirical Benchmark: Naive RAG vs. Corrective RAG (CRAG)
 
